@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Currency Converter</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#4f6cff,#7b8cff);
+}
+
+.screen{
+background:white;
+width:420px;
+padding:30px;
+border-radius:18px;
+box-shadow:0 15px 40px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.title{
+font-size:26px;
+font-weight:600;
+margin-bottom:20px;
+color:#333;
+}
+
+.subtitle{
+font-size:14px;
+color:#666;
+margin-bottom:25px;
+}
+
+.label{
+font-size:14px;
+margin-bottom:5px;
+color:#555;
+text-align:left;
+}
+
+input,select{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ddd;
+margin-bottom:15px;
+font-size:14px;
+}
+
+input:focus,select:focus{
+outline:none;
+border-color:#4f6cff;
+box-shadow:0 0 0 2px rgba(79,108,255,0.15);
+}
+
+button{
+width:100%;
+padding:13px;
+border:none;
+border-radius:10px;
+background:#4f6cff;
+color:white;
+font-size:16px;
+font-weight:500;
+cursor:pointer;
+transition:0.25s;
+}
+
+button:hover{
+background:#3d55e0;
+}
+
+.resultBox{
+margin-top:20px;
+background:#f3f5ff;
+padding:15px;
+border-radius:10px;
+text-align:center;
+font-size:18px;
+font-weight:500;
+color:#333;
+}
+
+.hidden{display:none}
+</style>
+</head>
+
+<body>
+
+<!-- Welcome Screen -->
+<div id="welcomeScreen" class="screen">
+<div class="title">🌍 Currency Converter</div>
+<div class="subtitle">Convert any currency of the countries</div>
+<button onclick="enterConverter()">Click Here to Enter Currency Converter</button>
+</div>
+
+<!-- Converter Screen -->
+<div id="converterScreen" class="screen hidden">
+
+<div class="title">💱 Currency Converter</div>
+
+<div class="label">Amount</div>
+<input type="number" id="amount" placeholder="Enter amount">
+
+<div class="label">From Currency</div>
+<select id="fromCurrency">
+<option value="USD">🇺🇸 USD - US Dollar</option>
+<option value="INR">🇮🇳 INR - Indian Rupee</option>
+<option value="EUR">🇪🇺 EUR - Euro</option>
+<option value="GBP">🇬🇧 GBP - British Pound</option>
+<option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+<option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+<option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+<option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+<option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
+<option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+<option value="AED">🇦🇪 AED - UAE Dirham</option>
+<option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+<option value="KRW">🇰🇷 KRW - Korean Won</option>
+<option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+<option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+<option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+</select>
+
+<div class="label">To Currency</div>
+<select id="toCurrency">
+<option value="USD">🇺🇸 USD - US Dollar</option>
+<option value="INR">🇮🇳 INR - Indian Rupee</option>
+<option value="EUR">🇪🇺 EUR - Euro</option>
+<option value="GBP">🇬🇧 GBP - British Pound</option>
+<option value="JPY">🇯🇵 JPY - Japanese Yen</option>
+<option value="AUD">🇦🇺 AUD - Australian Dollar</option>
+<option value="CAD">🇨🇦 CAD - Canadian Dollar</option>
+<option value="CNY">🇨🇳 CNY - Chinese Yuan</option>
+<option value="SGD">🇸🇬 SGD - Singapore Dollar</option>
+<option value="CHF">🇨🇭 CHF - Swiss Franc</option>
+<option value="AED">🇦🇪 AED - UAE Dirham</option>
+<option value="SAR">🇸🇦 SAR - Saudi Riyal</option>
+<option value="KRW">🇰🇷 KRW - Korean Won</option>
+<option value="BRL">🇧🇷 BRL - Brazilian Real</option>
+<option value="ZAR">🇿🇦 ZAR - South African Rand</option>
+<option value="MXN">🇲🇽 MXN - Mexican Peso</option>
+</select>
+
+<button onclick="convertCurrency()">Convert Currency</button>
+
+<div id="result" class="resultBox">Converted amount will appear here</div>
+
+</div>
+
+<script>
+
+function enterConverter(){
+document.getElementById("welcomeScreen").classList.add("hidden");
+document.getElementById("converterScreen").classList.remove("hidden");
+}
+
+async function convertCurrency(){
+
+let amount=document.getElementById("amount").value;
+let from=document.getElementById("fromCurrency").value;
+let to=document.getElementById("toCurrency").value;
+
+if(!amount){
+alert("Please enter amount");
+return;
+}
+
+try{
+
+let url=`https://open.er-api.com/v6/latest/${from}`;
+let response=await fetch(url);
+let data=await response.json();
+
+let rate=data.rates[to];
+
+if(!rate){
+document.getElementById("result").innerHTML="Currency not supported";
+return;
+}
+
+let converted=(amount*rate).toFixed(2);
+
+document.getElementById("result").innerHTML=`${amount} ${from} = ${converted} ${to}`;
+
+}catch(error){
+
+document.getElementById("result").innerHTML="Error fetching exchange rate";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
