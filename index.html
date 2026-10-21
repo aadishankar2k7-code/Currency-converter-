@@ -279,7 +279,10 @@ function addMessage(role, content, temporary = false) {
   return bubble;
 }
 
+let chatGeneration = 0;
+
 function resetChat() {
+  chatGeneration += 1;
   chatWindow.innerHTML = '';
   addMessage('assistant', starter);
 }
@@ -317,6 +320,7 @@ async function sendMessage() {
   const text = promptInput.value.trim();
   if (!text) return;
 
+  const generation = chatGeneration;
   addMessage('user', escapeHTML(text));
   promptInput.value = '';
   autoSizeTextarea();
@@ -324,6 +328,8 @@ async function sendMessage() {
   const thinking = addMessage('assistant', '<span class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>', true);
 
   await new Promise((resolve) => setTimeout(resolve, 550));
+
+  if (generation !== chatGeneration) return;
 
   thinking.remove();
   addMessage('assistant', localAIResponse(text));
